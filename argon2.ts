@@ -84,7 +84,7 @@ class Argon2 {
     );
   }
 
-  constructor(
+  private constructor(
     wasmExports: any,
     wasmMemory: any,
     argon2InstancePtr: any,

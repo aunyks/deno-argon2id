@@ -33,7 +33,7 @@ Deno.test("basic verify", async () => {
 });
 
 Deno.test("from / to bytes", () => {
-  const data = [0, 1, 2, 3, 9, 8, 7, 5]
+  const data = new Uint8Array([0, 1, 2, 3, 9, 8, 7, 5])
   assertEquals(
     data,
     toBytes(fromBytes(data)),
@@ -41,7 +41,7 @@ Deno.test("from / to bytes", () => {
 });
 
 Deno.test("from / to base64", () => {
-  const data = [0, 1, 2, 3, 9, 8, 7, 5]
+  const data = new Uint8Array([0, 1, 2, 3, 9, 8, 7, 5])
   assertEquals(
     data,
     fromBase64(toBase64(data)),
