@@ -1,4 +1,4 @@
-import { Argon2, fromBase64, toBase64, fromBytes, toBytes } from "./argon2.ts";
+import { Argon2, fromBase64, fromBytes, toBase64, toBytes } from "./argon2.ts";
 import {
   assert,
   assertEquals,
@@ -9,7 +9,7 @@ Deno.test("basic hash", async () => {
     saltLength: 16,
     outputLength: 32,
   });
-  const digest = argon.hash(
+  const [digest] = argon.hash(
     "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
     toBase64(new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])),
   );
@@ -33,7 +33,7 @@ Deno.test("basic verify", async () => {
 });
 
 Deno.test("from / to bytes", () => {
-  const data = new Uint8Array([0, 1, 2, 3, 9, 8, 7, 5])
+  const data = new Uint8Array([0, 1, 2, 3, 9, 8, 7, 5]);
   assertEquals(
     data,
     toBytes(fromBytes(data)),
@@ -41,10 +41,9 @@ Deno.test("from / to bytes", () => {
 });
 
 Deno.test("from / to base64", () => {
-  const data = new Uint8Array([0, 1, 2, 3, 9, 8, 7, 5])
+  const data = new Uint8Array([0, 1, 2, 3, 9, 8, 7, 5]);
   assertEquals(
     data,
     fromBase64(toBase64(data)),
   );
 });
-

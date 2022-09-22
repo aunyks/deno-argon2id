@@ -48,13 +48,17 @@ class Argon2 {
       throw new Error("Salt length cannot be less than 8 bytes");
     }
     if (options.saltLength > 0xFFFFFFFF) {
-      throw new Error("Salt length cannot be greater than 4294967295 bytes");
+      throw new Error(
+        "Salt length cannot be greater than 4294967295 bytes",
+      );
     }
     if (options.outputLength < 4) {
       throw new Error("Output length cannot be less than 4 bytes");
     }
     if (options.outputLength > 0xFFFFFFFF) {
-      throw new Error("Output length cannot be greater than 4294967295 bytes");
+      throw new Error(
+        "Output length cannot be greater than 4294967295 bytes",
+      );
     }
     let wasmMemory = new WebAssembly.Memory({
       initial: 1,
@@ -100,8 +104,13 @@ class Argon2 {
     this._options = options;
   }
 
-  hash(password: string, saltB64?: string): string {
+  hash(password: string, saltB64?: string): [string, string] {
     const passwordBytes = toBytes(password);
+    if (passwordBytes.length > 0xFFFFFFFF) {
+      throw new Error(
+        "Password length cannot be greater than 4294967295 bytes",
+      );
+    }
     // @ts-ignore
     const passwordPtr = this._wasmExports.alloc_bytes(passwordBytes.length);
     // Put passwordBytes in passwordPtr
@@ -135,6 +144,8 @@ class Argon2 {
       saltWriter.set(saltBytes);
     } else {
       crypto.getRandomValues(saltWriter);
+      // Copy the salt bytes for returning before they get freed
+      saltB64 = toBase64(saltWriter.slice(0));
     }
 
     // @ts-ignore
@@ -162,7 +173,7 @@ class Argon2 {
     // @ts-ignore
     this._wasmExports.free_bytes(digestPtr, this._options.outputLength);
 
-    return toBase64(outputBytes);
+    return [toBase64(outputBytes), saltB64];
   }
 
   verify(
@@ -170,7 +181,7 @@ class Argon2 {
     existingB64Digest: string,
     saltB64?: string,
   ): boolean {
-    return this.hash(password, saltB64) === existingB64Digest;
+    return this.hash(password, saltB64)[0] === existingB64Digest;
   }
 }
 
