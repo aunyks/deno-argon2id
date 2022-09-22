@@ -32,6 +32,22 @@ Deno.test("basic verify", async () => {
   );
 });
 
+Deno.test("hash then verify", async () => {
+  const argon = await Argon2.initialize({
+    saltLength: 16,
+    outputLength: 32,
+  });
+
+  const [digest, salt] = argon.hash("pw");
+  assert(
+    argon.verify(
+      "pw",
+      digest,
+      salt,
+    ),
+  );
+});
+
 Deno.test("from / to bytes", () => {
   const data = new Uint8Array([0, 1, 2, 3, 9, 8, 7, 5]);
   assertEquals(
