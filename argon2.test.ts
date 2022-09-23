@@ -24,10 +24,10 @@ Deno.test("basic verify", async () => {
   assert(
     argon.verify(
       "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
-      "tZglyBOAchSOYY9drXmdEoHOTrVeo5A8pt11mc6wueA=",
       toBase64(
         new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
       ),
+      "tZglyBOAchSOYY9drXmdEoHOTrVeo5A8pt11mc6wueA=",
     ),
   );
 });
@@ -42,8 +42,8 @@ Deno.test("hash then verify", async () => {
   assert(
     argon.verify(
       "pw",
-      digest,
       salt,
+      digest,
     ),
   );
 });
